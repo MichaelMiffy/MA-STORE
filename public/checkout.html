@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+        .checkout-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+        .success-message {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="checkout-container">
+        <h2>Checkout</h2>
+        <div id="checkout-items"></div>
+        <p><strong>Total: Ksh <span id="checkout-total">0.00</span></strong></p>
+
+        <h3>Delivery Details</h3>
+        <p class="error-message">Deliveries only allowed around Baraton. If you stay far, we can arrange for your deliveries.</p>
+
+        <label for="delivery-location">Delivery Location:</label>
+        <input type="text" id="delivery-location" placeholder="Enter your delivery location" required>
+
+        <label for="mpesa-number">M-Pesa Phone Number:</label>
+        <input type="tel" id="mpesa-number" placeholder="07XXXXXXXX" maxlength="14" required>
+
+        <label for="ref-code">Ref Code:</label>
+        <input type="text" id="ref-code" placeholder="Enter your ref code" required>
+
+        <label for="additional-info">Additional Info:</label>
+        <textarea id="additional-info" placeholder="Any additional instructions..." rows="4"></textarea>
+
+        <button onclick="confirmPurchase()">Confirm Purchase</button>
+        
+        <p id="response-message"></p> <!-- Dynamic response message -->
+    </div>
+
+</body>
+
+<script>
+    function getCartFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const cartData = params.get('cart');
+        return cartData ? JSON.parse(decodeURIComponent(cartData)) : [];
+    }
+
+    function cleanPrice(price) {
+        return parseFloat(price.toString().replace(/[^\d.]/g, '')) || 0; 
+    }
+
+    function loadCheckoutDetails() {
+        const cart = getCartFromUrl();
+        const checkoutItemsDiv = document.getElementById("checkout-items");
+        const checkoutTotalSpan = document.getElementById("checkout-total");
+
+        if (!cart.length) {
+            checkoutItemsDiv.innerHTML = "<p>No items in cart</p>";
+            return;
+        }
+
+        let totalAmount = 0;
+        checkoutItemsDiv.innerHTML = ""; 
+
+        cart.forEach(item => {
+            const price = cleanPrice(item.price);
+            const quantity = parseInt(item.quantity) || 0;
+            const itemPrice = price * quantity; 
+
+            totalAmount += itemPrice; 
+            checkoutItemsDiv.innerHTML += `<p>${item.description} - Ksh ${price.toFixed(2)} x ${quantity} = Ksh ${itemPrice.toFixed(2)}</p>`;
+        });
+
+        checkoutTotalSpan.innerText = totalAmount.toFixed(2);
+    }
+
+    async function confirmPurchase() {
+        const deliveryLocation = document.getElementById("delivery-location").value.trim();
+        const mpesaNumber = document.getElementById("mpesa-number").value.trim();
+        const refCode = document.getElementById("ref-code").value.trim();
+        const additionalInfo = document.getElementById("additional-info").value.trim();
+        const responseMessage = document.getElementById("response-message");
+
+        const cart = getCartFromUrl();
+
+        if (!deliveryLocation || !mpesaNumber || !refCode) {
+            responseMessage.textContent = "❌ Please fill in all required fields.";
+            responseMessage.className = "error-message";
+            return;
+        }
+
+        let orderMessage = cart.map(item => `${item.description} (Qty: ${item.quantity})`).join(", ");
+        orderMessage += `. Delivery: ${deliveryLocation}. Additional Info: ${additionalInfo}`;
+
+        let totalAmount = cart.reduce((sum, item) => sum + (cleanPrice(item.price) * parseInt(item.quantity)), 0);
+
+        const orderData = {
+            message: orderMessage,
+            msisdn: mpesaNumber,
+            amount: totalAmount,
+            refCode: refCode
+        };
+
+        try {
+            const response = await fetch('/submit-order', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderData)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                responseMessage.textContent = `✅ ${result.message || "Order submitted successfully! Enter your M-Pesa PIN to confirm."}`;
+                responseMessage.className = "success-message";
+
+                // Reset form on success
+                document.getElementById("delivery-location").value = "";
+                document.getElementById("mpesa-number").value = "";
+                document.getElementById("ref-code").value = "";
+                document.getElementById("additional-info").value = "";
+
+                setTimeout(() => {
+                    window.location.href = "index.html"; // Redirect after showing message
+                }, 3000);
+
+            } else {
+                responseMessage.textContent = `❌ ${result.error || "Failed to submit order. Please try again."}`;
+                responseMessage.className = "error-message";
+            }
+
+        } catch (error) {
+            console.error("Error submitting order:", error);
+            responseMessage.textContent = "❌ Network error! Please try again.";
+            responseMessage.className = "error-message";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCheckoutDetails);
+</script>
+
+</html>

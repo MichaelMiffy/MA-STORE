@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f0f0f0, #cccccc);
+            color: #333;
+            text-align: center;
+        }
+
+        header {
+            background-color: #444;
+            color: white;
+            padding: 15px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 300px;
+            margin-top: 50px;
+            display: inline-block;
+            text-align: left;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="password"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #444;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .login-link {
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>MA-STORE Registration</h1>
+    </header>
+
+    <main>
+        <div class="form-container">
+            <form id="registrationForm" onsubmit="return validateForm()" action='/register' method="POST">
+                <h2>Register Now</h2>
+
+                <label for="phone">M-Pesa Phone Number:</label>
+                <input type="text" id="phone" name="phone" placeholder="(01... or 07...)" maxlength="10">
+                <span class="error" id="phoneError"></span>
+
+                <label for="pin">PIN (4 digits):</label>
+                <input type="password" id="pin" name="pin" placeholder="Enter 4-digit PIN" maxlength="4">
+                <span class="error" id="pinError"></span>
+
+                <label for="realName">Real Name:</label>
+                <input type="text" id="realName" name="realName" placeholder="For Payment Confirmation">
+                <span class="error" id="nameError"></span>
+
+                <button type="submit">Register</button>
+                
+                <div class="login-link">
+                    <p>Already have an account? <a href="/login">Login here</a></p>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 MA-STORE</p>
+    </footer>
+
+    <script>
+        // Show alert messages from URL parameters
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+
+            if (params.has('error')) {
+                alert(params.get('error'));  // Show error alert
+            }
+
+            if (params.has('success')) {
+                alert(params.get('success'));  // Show success alert
+            }
+        });
+
+        // Form Validation
+        function validateForm() {
+            // Reset previous errors
+            document.getElementById('phoneError').innerText = '';
+            document.getElementById('pinError').innerText = '';
+            document.getElementById('nameError').innerText = '';
+
+            var phone = document.getElementById('phone').value;
+            var pin = document.getElementById('pin').value;
+            var realName = document.getElementById('realName').value;
+            var valid = true;
+
+            // Phone Number Validation
+            var phonePattern = /^(01|07)\d{8}$/;
+            if (!phonePattern.test(phone)) {
+                document.getElementById('phoneError').innerText = 'Invalid phone number! Must start with 01 or 07 and be 10 digits long.';
+                valid = false;
+            }
+
+            // PIN Validation
+            if (pin.length !== 4 || isNaN(pin)) {
+                document.getElementById('pinError').innerText = 'Invalid PIN! Must be a 4-digit number.';
+                valid = false;
+            }
+
+            // Real Name Validation
+            if (realName.trim() === '') {
+                document.getElementById('nameError').innerText = 'Real name cannot be empty!';
+                valid = false;
+            }
+
+            // If all validations pass, show success message
+            if (valid) {
+                alert('Wait For Registration Confirmation');
+            }
+
+            return valid; // If any field is invalid, prevent form submission
+        }
+    </script>
+
+</body>
+</html>

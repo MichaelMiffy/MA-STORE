@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/manifest.json">
+    <title>Welcome to MA-STORE</title>
+    <style>
+        /* General body styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('milk-splashing-glass.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Header styles */
+        header {
+            background-color: rgba(85, 85, 85, 0.8);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            width: 100%;
+            animation: slide-in 2s ease-out;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        /* Navigation styles */
+        nav {
+    background: rgba(255, 255, 255, 0.9); /* Slightly white background */
+    padding: 10px 0;
+    text-align: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    animation: fade-in 2s ease-in;
+}
+
+nav a {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 5px;
+    text-decoration: none;
+    color: #222; /* Darker color for visibility */
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: color 0.3s, transform 0.3s, background 0.3s;
+}
+
+nav a:hover {
+    color: #fff;
+    background: #28a745; /* Green highlight on hover */
+    transform: scale(1.1);
+}
+
+/* Responsive Navigation */
+@media (max-width: 768px) {
+    nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav a {
+        display: block;
+        width: 90%;
+        text-align: center;
+        font-size: 1rem;
+        padding: 12px;
+    }
+}
+        /* Product list container (centers products) */
+        #product-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px;
+    }
+
+        /* Product box styling */
+        .product {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        width: 250px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
+    .product h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+        .product:hover {
+            transform: scale(1.05);
+        }
+
+        .product-img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
+
+        /* Footer styles */
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(85, 85, 85, 0.8);
+            color: white;
+            position:relative;
+            ;
+            bottom: 0;
+            width: 100%;
+            animation: slide-up 2s ease-out;
+        }
+
+        /* Animation Keyframes */
+        @keyframes slide-in {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slide-up {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        /* Cart Styling */
+#cart {
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    width: 300px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    z-index: 1000;
+    cursor: grab;
+}
+
+#cart h2 {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 8px 0;
+}
+
+.cart-item button {
+    background: #ff6600;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.cart-item button:hover {
+    background: #cc5500;
+}
+
+/* Draggable Cart */
+#cart.dragging {
+    opacity: 0.6;
+}
+/* General button styling */
+button {
+    font-size: 16px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Add to Cart button */
+.add-to-cart {
+    background-color: #011224;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.add-to-cart:hover {
+    background-color: #3669a0;
+}
+
+/* Disabled Add to Cart button */
+.add-to-cart:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Proceed to Checkout button */
+.proceed-to-checkout {
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.proceed-to-checkout:hover {
+    background-color: #218838;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MA-STORE</h1>
+    </header>
+    <nav>
+        <a href="/register">Register</a>
+        <a href="/login">Login To Check Balance</a>
+        <a href="/contact">Contact Us</a>
+        <a href="/referral">Earn Through Our Program</a>
+    </nav>    
+    
+    <div id="product-list">
+        <!-- Products will be loaded here dynamically -->
+    </div>
+
+    <footer>
+        <p>&copy; 2024 MA-STORE.</p>
+    </footer>
+
+    <script>
+let cart = [];
+
+async function fetchProducts() {
+    try {
+        const response = await fetch('/api/products');
+        const products = await response.json();
+        console.log("Products received:", products);
+
+        const productListDiv = document.getElementById('product-list');
+        productListDiv.innerHTML = '';
+
+        if (!products.length) {
+            productListDiv.innerHTML = '<p style="text-align: center;">No products available</p>';
+            return;
+        }
+
+        products.forEach(product => {
+            const productDiv = document.createElement('div');
+            productDiv.classList.add('product');
+
+            let productImage = product.image
+                ? `<img src="data:${product.contentType};base64,${product.image}" alt="${product.description}" class="product-img"/>`
+                : '<p>No image available</p>';
+
+            let addToCartButton = `<button 
+                class="add-to-cart" 
+                data-id="${product._id}"
+                data-description="${product.description}"
+                data-price="${product.price}"
+                data-quantity="${product.quantity}"
+                ${product.quantity === 0 ? 'disabled' : ''}>
+                ${product.quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+            </button>`;
+
+            productDiv.innerHTML = `
+                <h3>${product.description}</h3>
+                <p>Price: Ksh ${product.price}</p>
+                <p>Quantity: ${product.quantity}</p>
+                ${productImage}
+                ${addToCartButton}
+            `;
+            productListDiv.appendChild(productDiv);
+        });
+    } catch (error) {
+        console.error("Error fetching products:", error);
+    }
+}
+
+function addToCart(id, description, price, availableQuantity) {
+    let existingProduct = cart.find(item => item.id === id);
+
+    if (existingProduct) {
+        if (existingProduct.quantity < availableQuantity) {
+            existingProduct.quantity++;
+        } else {
+            alert("Cannot add more than available stock!");
+        }
+    } else {
+        cart.push({ id, description, price, quantity: 1, availableQuantity });
+    }
+
+    console.log("Cart Updated:", cart);
+    updateCartDisplay();
+}
+
+document.addEventListener("click", (event) => {
+    if (event.target.classList.contains("add-to-cart")) {
+        let id = event.target.dataset.id;
+        let description = event.target.dataset.description;
+        let price = event.target.dataset.price;
+        let availableQuantity = event.target.dataset.quantity;
+
+        addToCart(id, description, price, availableQuantity);
+    }
+});
+
+function updateCartDisplay() {
+    const cartDiv = document.getElementById('cart');
+    cartDiv.innerHTML = '<h2>Shopping Cart</h2>';
+
+    if (cart.length === 0) {
+        cartDiv.innerHTML += '<p>Your cart is empty</p>';
+        return;
+    }
+
+    cart.forEach((item, index) => {
+        cartDiv.innerHTML += `
+            <div class="cart-item">
+                <p>${item.description} - Ksh ${item.price} x ${item.quantity}</p>
+                <button onclick="changeQuantity(${index}, -1)">-</button>
+                <button onclick="changeQuantity(${index}, 1)">+</button>
+                <button onclick="removeFromCart(${index})">Remove</button>
+            </div>
+        `;
+    });
+
+    cartDiv.innerHTML += `<button onclick="checkout()">Proceed to Checkout</button>`;
+}
+
+function changeQuantity(index, change) {
+    if (cart[index].quantity + change > 0 && cart[index].quantity + change <= cart[index].availableQuantity) {
+        cart[index].quantity += change;
+    } else if (cart[index].quantity + change > cart[index].availableQuantity) {
+        alert("Cannot exceed available stock!");
+    }
+
+    updateCartDisplay();
+}
+
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCartDisplay();
+}
+
+function checkout() {
+    const cartData = encodeURIComponent(JSON.stringify(cart));
+    window.location.href = `checkout.html?cart=${cartData}`;
+}
+
+document.addEventListener('DOMContentLoaded', fetchProducts);
+
+</script>
+    
+    
+    <div id="cart"></div>
+              
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const cart = document.getElementById("cart");
+
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    cart.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        offsetX = e.clientX - cart.getBoundingClientRect().left;
+        offsetY = e.clientY - cart.getBoundingClientRect().top;
+        cart.classList.add("dragging");
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (isDragging) {
+            cart.style.left = `${e.clientX - offsetX}px`;
+            cart.style.top = `${e.clientY - offsetY}px`;
+        }
+    });
+
+    document.addEventListener("mouseup", () => {
+        isDragging = false;
+        cart.classList.remove("dragging");
+    });
+});
+</script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log("Service Worker Registered", reg))
+                .catch(err => console.log("Service Worker Registration Failed", err));
+        });
+    }
+    </script>
+    <script>
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();  // Prevent default browser prompt
+            deferredPrompt = event;
+        
+            // Show a custom install button
+            let installBtn = document.createElement('button');
+            installBtn.innerText = "Add to Home Screen";
+            installBtn.style.cssText = "position:fixed;bottom:10px;right:10px;padding:10px;background:#4CAF50;color:white;border:none;border-radius:5px;cursor:pointer;";
+            document.body.appendChild(installBtn);
+        
+            installBtn.addEventListener('click', () => {
+                installBtn.style.display = "none";  // Hide the button
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+        });
+        </script>        
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script>
+        // Redirect to home if user is already logged in (handled by session)
+        fetch('/check-session')
+            .then(response => response.json())
+            .then(data => {
+                if (data.loggedIn) {
+                    window.location.href = "/home"; // Redirect if logged in
+                }
+            })
+            .catch(error => console.error("Session check error:", error));
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .login-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background: #a1a1a1;
+            cursor: not-allowed;
+        }
+        button:hover:not(:disabled) {
+            background: #218838;
+        }
+        .loading {
+            display: none;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+        .note {
+            font-size: 12px;
+            margin-top: 15px;
+            color: #666;
+        }
+        .note a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .note a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="tel" id="phone" name="phone" placeholder="Phone Number" required maxlength="13" pattern="[0-9]{10,15}">
+            <input type="password" id="pin" name="pin" placeholder="Enter PIN" required maxlength="4" pattern="[0-9]{4}">
+            <button type="submit" id="loginBtn">Login</button>
+        </form>
+
+        <!-- Loading Indicator -->
+        <p class="loading" id="loadingText">Logging in... Please wait</p>
+
+        <!-- Error Message -->
+        <p class="error-message" id="errorMessage"></p>
+        
+        <p class="note">In case of a forgotten PIN, Please feel free to contact customer care <a href="/contact">HERE</a> for PIN change.</p>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const phone = document.getElementById("phone").value;
+            const pin = document.getElementById("pin").value;
+            const loginBtn = document.getElementById("loginBtn");
+            const loadingText = document.getElementById("loadingText");
+            const errorMessage = document.getElementById("errorMessage");
+
+            // Disable button and show loading
+            loginBtn.disabled = true;
+            loadingText.style.display = "block";
+            errorMessage.style.display = "none";
+
+            try {
+                const response = await fetch("/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ phone, pin })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.href = "/home"; // Redirect on success
+                } else {
+                    throw new Error(data.error || "Login failed");
+                }
+            } catch (error) {
+                errorMessage.innerText = error.message;
+                errorMessage.style.display = "block";
+            } finally {
+                // Re-enable button and hide loading
+                loginBtn.disabled = false;
+                loadingText.style.display = "none";
+            }
+        });
+    </script>
+
+</body>
+</html>

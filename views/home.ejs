@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .sidebar {
+            width: 250px;
+            background: #343a40;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .sidebar h2 {
+            margin-bottom: 30px;
+        }
+        .sidebar .logout-btn {
+            margin-top: auto;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+            background: #dc3545;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .sidebar .logout-btn:hover {
+            background: #c82333;
+        }
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            text-align: center;
+        }
+        .dashboard-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+        }
+        .info {
+            margin: 15px 0;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .copy-btn {
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+    <script>
+        function copyToClipboard(text, element) {
+            navigator.clipboard.writeText(text).then(() => {
+                element.innerText = "Copied!";
+                setTimeout(() => element.innerText = "Copy", 2000);
+            }).catch(err => {
+                console.error('Error copying text: ', err);
+            });
+        }
+    </script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+        <p>Welcome, <b><%= realName %></b>!</p>
+        <a class="logout-btn" href="/logout">Logout</a>
+    </div>
+
+    <!-- Main Dashboard Content -->
+    <div class="main-content">
+        <div class="dashboard-card">
+            <h3>User Details</h3>
+            
+            <div class="info">
+                <span><b>Code:</b> <%= code %></span>
+                <button class="copy-btn" onclick="copyToClipboard('<%= code %>', this)">Copy</button>
+            </div>
+
+            <div class="info">
+                <span><b>Link:</b> <a href="https://<%= link %>" target="_blank"><%= link %></a></span>
+                <button class="copy-btn" onclick="copyToClipboard('<%= link %>', this)">Copy</button>
+            </div>
+
+            <div class="info">
+                <span><b>Balance:</b> Ksh <%= balance %></span>
+            </div>
+
+            <div class="info">
+                <span><b>Message:</b> <%= message %></span>
+                <button class="copy-btn" onclick="copyToClipboard('<%= message %>', this)">Copy</button>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
