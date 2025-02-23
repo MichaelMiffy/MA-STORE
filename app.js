@@ -189,8 +189,8 @@ app.post('/register', async (req, res) => {
 
         // Generate unique code
         const code = nanoid(6);
-        const link = 'flop-oweh.onrender.com/milk';
-        const message = `Use this '${code}' to buy milk plus other products and don't forget to use my '${code}' in the invite code section.`;
+        const link = 'ma-store.onrender.com/';
+        const message = `Use this link '${link}' to buy milk plus other products and don't forget to use my code '${code}' in the invite code section.`;
         const balance = 0;
 
         // Save user details in UserData collection
